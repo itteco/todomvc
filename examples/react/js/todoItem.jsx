@@ -75,34 +75,77 @@ var app = app || {};
 			}
 		},
 
+		componentDidMount: function() {
+			window.iframely && iframely.load();
+		},
+
+		createIframelyLink: function () {
+			return {__html: '<a href="' + this.props.todo.title + '" data-iframely-url>' + this.props.todo.title + '</a>'};
+		},
 		render: function () {
-			return (
-				<li className={classNames({
-					completed: this.props.todo.completed,
-					editing: this.props.editing
-				})}>
-					<div className="view">
+			if (this.props.todo.title.match(/https?:\/\//)) {
+				
+				return (
+					<li className={classNames({
+						completed: this.props.todo.completed,
+						editing: this.props.editing
+					})}>
+						<div className="view">
+							<input
+								className="toggle"
+								type="checkbox"
+								checked={this.props.todo.completed}
+								onChange={this.props.onToggle}
+							/>
+							<label onDoubleClick={this.handleEdit}>
+								{this.props.todo.title}
+							</label>
+							<button className="destroy" onClick={this.props.onDestroy} />
+						</div>
+						<div className="embed-view" dangerouslySetInnerHTML={this.createIframelyLink()} />
 						<input
-							className="toggle"
-							type="checkbox"
-							checked={this.props.todo.completed}
-							onChange={this.props.onToggle}
+							ref="editField"
+							className="edit"
+							value={this.state.editText}
+							onBlur={this.handleSubmit}
+							onChange={this.handleChange}
+							onKeyDown={this.handleKeyDown}
 						/>
-						<label onDoubleClick={this.handleEdit}>
-							{this.props.todo.title}
-						</label>
-						<button className="destroy" onClick={this.props.onDestroy} />
-					</div>
-					<input
-						ref="editField"
-						className="edit"
-						value={this.state.editText}
-						onBlur={this.handleSubmit}
-						onChange={this.handleChange}
-						onKeyDown={this.handleKeyDown}
-					/>
-				</li>
-			);
+					</li>
+				);
+			
+			} else {
+					
+	
+				return (
+					<li className={classNames({
+						completed: this.props.todo.completed,
+						editing: this.props.editing
+					})}>
+						<div className="view">
+							<input
+								className="toggle"
+								type="checkbox"
+								checked={this.props.todo.completed}
+								onChange={this.props.onToggle}
+							/>
+							<label onDoubleClick={this.handleEdit}>
+								{this.props.todo.title}
+							</label>
+							<button className="destroy" onClick={this.props.onDestroy} />
+						</div>
+						<input
+							ref="editField"
+							className="edit"
+							value={this.state.editText}
+							onBlur={this.handleSubmit}
+							onChange={this.handleChange}
+							onKeyDown={this.handleKeyDown}
+						/>
+					</li>
+				);
+
+			}
 		}
 	});
 })();
